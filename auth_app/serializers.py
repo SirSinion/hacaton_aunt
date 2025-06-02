@@ -23,7 +23,7 @@ class AuthenticationSerializer(serializers.Serializer):
     # serializers.ListField(
     #     child=serializers.ListField(child=serializers.IntegerField(), min_length=2, max_length=2)
     # )
-    audio = serializers.FileField(required=False)
+    audio = serializers.CharField(required=False)
     trusted_account = serializers.BooleanField(required=False)
 
     def validate(self, data):

@@ -2,14 +2,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import AuthenticationSerializer
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .models import Trusted
 from .serializers import ConfirmTrustedSerializer, CheckTrustedRequestSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class AuthenticationView(APIView):
-    parser_classes = [MultiPartParser, FormParser]  # Для multipart данных
+    parser_classes = [MultiPartParser, FormParser, JSONParser]  # Для multipart данных
 
     def post(self, request, *args, **kwargs):
         # Печать данных запроса для дебага
@@ -56,7 +56,7 @@ class ConfirmTrustedView(APIView):
 
             # Find the Trusted record where user = current_user and trusted = user_id
             try:
-                trusted_instance = Trusted.objects.get(trusted=current_user, user=user_id, status=0)
+                trusted_instance = Trusted.objects.filter(trusted=current_user, user=user_id, status=0).order_by('-id').first()
             except Trusted.DoesNotExist:
                 return Response({"error": "No trust record found for this user."}, status=status.HTTP_404_NOT_FOUND)
 
